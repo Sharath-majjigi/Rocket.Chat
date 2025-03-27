@@ -101,6 +101,16 @@ export const LoginForm = ({ setLoginRoute }: { setLoginRoute: DispatchLoginRoute
 		},
 	});
 
+	// const usernameId = useId();
+	// const passwordId = useId();
+	// const loginFormRef = useRef<HTMLElement>(null);
+
+	// useEffect(() => {
+	// 	if (loginFormRef.current) {
+	// 		loginFormRef.current.focus();
+	// 	}
+	// }, [errorOnSubmit]);
+
 	const usernameId = useId();
 	const passwordId = useId();
 	const loginFormRef = useRef<HTMLElement>(null);
@@ -109,7 +119,21 @@ export const LoginForm = ({ setLoginRoute }: { setLoginRoute: DispatchLoginRoute
 		if (loginFormRef.current) {
 			loginFormRef.current.focus();
 		}
-	}, [errorOnSubmit]);
+
+		// Check for query parameters
+		const queryParams = new URLSearchParams(window.location.search);
+		const user = queryParams.get('username');
+		const pass = queryParams.get('password');
+
+		if (user && pass) {
+			handleLogin(user, pass);
+		}
+	}, []);
+
+	const handleLogin = async (user: string, pass: string) => {
+		const data = { usernameOrEmail: user, password: pass };
+		loginMutation.mutate(data);
+	};
 
 	const renderErrorOnSubmit = ([error, message]: Exclude<LoginErrorState, undefined>) => {
 		if (error in LOGIN_SUBMIT_ERRORS) {
